@@ -28,9 +28,11 @@ def editparam():
         configp.write(configfile)
 
 ##TElegram param
-config.api_key = str( sys.argv[1] )
-config.user_id = str( sys.argv[2] )
-bot = telebot.TeleBot(config.api_key)
+configp["telegram"]["api_key"] = str( sys.argv[1] )
+configp["telegram"]["user_id"] = str( sys.argv[2] )
+editparam()
+configp.read('param.ini')
+bot = telebot.TeleBot(configp["telegram"]["api_key"])
 
 @bot.message_handler(commands=['restart'])
 def send_restart(message):
@@ -86,19 +88,44 @@ def processSetCritE(message):
     else:
         bot.reply_to(message, 'Oooops bad value!')
 
-#Critical distance
+#search distance
 @bot.message_handler(commands=['dist'])
 def send_distE(message):
     configp.read('param.ini')
-    msg = bot.reply_to(message,"Edit Max search distance of GNSS bases saved:\n old value:"+configp["data"]["maxdist"]+"km,\n Enter the new value ! ")
+    msg = bot.reply_to(message,"Edit Max search distance of GNSS bases saved:\n old value:"+configp["data"]["maxdist"]+"km")
     bot.register_next_step_handler(msg, processSetDistE)
 def processSetDistE(message):
     answer = message.text
     if answer.isdigit():
         print(answer)
-        configp["data"]["maxdist"] = answer
+        configp["caster"]["adrs"] = answer
         stoptowrite()
         bot.reply_to(message,"NEW Max search distance: "+configp["data"]["maxdist"]+"km")
+    else:
+        bot.reply_to(message, 'Oooops bad value!')
+
+#caster
+@bot.message_handler(commands=['caster'])
+def send_casterE(message):
+    configp.read('param.ini')
+    msg = bot.reply_to(message,"Edit caster adress and port:\n old value:\n"+configp["caster"]["adrs"]+":"+configp["caster"]["port"]+"\n Enter caster adress: ")
+    bot.register_next_step_handler(msg, processSetCasterE)
+def processSetCasterE(message):
+    answer = message.text
+    if answer.islower():
+        print(answer)
+        configp["caster"]["adrs"] = answer
+        msg = bot.reply_to(message,"NEW caster adresse: "+configp["caster"]["adrs"]+"\nEnter New port:")
+        bot.register_next_step_handler(msg, processSetCasterPortE)
+    else:
+        bot.reply_to(message, 'Oooops bad value!')
+def processSetCasterPortE(message):
+    answer = message.text
+    if answer.isdigit():
+        print(answer)
+        configp["caster"]["port"] = answer
+        stoptowrite()
+        bot.reply_to(message,"NEW caster adress + port: "+configp["caster"]["adrs"]+":"+configp["caster"]["port"])
     else:
         bot.reply_to(message, 'Oooops bad value!')
 
@@ -126,14 +153,16 @@ def echo_all(message):
 def telegrambot():
     global bot1
     if len(sys.argv) >= 2:
-        bot1 = telegram.Bot(token=config.api_key)
-        bot1.send_message(chat_id=config.user_id, text=configp["message"]["message"])
+        configp.read('param.ini')
+        bot1 = telegram.Bot(token=configp["telegram"]["api_key"])
+        bot1.send_message(chat_id=configp["telegram"]["user_id"], text=configp["message"]["message"])
 
 def telegrambot2():
     global bot2
     if len(sys.argv) >= 2:
-        bot2 = telegram.Bot(token=config.api_key)
-        bot2.send_message(chat_id=config.user_id, text=configp["message"]["message2"])
+        configp.read('param.ini')
+        bot2 = telegram.Bot(token=configp["telegram"]["api_key"])
+        bot2.send_message(chat_id=configp["telegram"]["user_id"], text=configp["message"]["message2"])
 
 ##Save LOG
 def savelog():
@@ -172,7 +201,7 @@ def ntripbrowser():
     global mp_use1_km
     global mp_Carrier
     ## 2-Get caster sourcetable
-    browser = (NtripBrowser(config.caster, port=config.port,
+    browser = (NtripBrowser(configp["caster"]["adrs"], port=configp["caster"]["port"],
     timeout=10,coordinates=(config.rlat,config.rlon),
     maxdist=int(configp["data"]["maxdist"]) ))
     getmp= browser.get_mountpoints()
@@ -211,6 +240,7 @@ def ntripbrowser():
     #     di = round(i["Distance"],2)
     #     car = i["Carrier"]
     #     print(mp,di,"km; Carrier:", car)
+
 
 ## 03-START loop to check base alive + rover position and nearest base
 def loop_mp():
@@ -269,13 +299,16 @@ def loop_mp():
                                 " But critical distance not reached: ",configp["data"]["mp_km_crit"],"km")
                     if configp["data"]["mp_use"] == mp_use1:
                         print("**INFO: Always connected to ",mp_use1)
-
         except serial.SerialException as e:
             #print('Device error: {}'.format(e))
             continue
         except pynmea2.ParseError as e:
             #print('Parse error: {}'.format(e))
             continue
+        except Exception as exc:
+            print("Caster adresses problem or Caster down!!!!!!!!")
+            time.sleep(3)
+            pass
 
 ## stop loop for change parameters (.ini)
 def stoptowrite():

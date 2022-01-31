@@ -19,6 +19,3 @@ lon = 0.0
 rlon = Decimal('-0.949')
 rlat = Decimal('46.165')
 rtime = '00:00:00'
-## 2-Get caster sourcetable
-caster='caster.centipede.fr'
-port=80
