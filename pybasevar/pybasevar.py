@@ -288,21 +288,21 @@ def loop_mp():
                             ##critique + Hysteresis(htrs)
                             crithtrs = int(configp["data"]["mp_km_crit"]) + int(configp["data"]["htrs"])
                             if Decimal(configp["data"]["dist_r2mp"]) < crithtrs:
-                                print("**INFO: Hysteresis critique running: ",crithtrs,"km")
+                                print("INFO: Hysteresis critique running: ",crithtrs,"km")
                             else:
                                 ##middle mount point 2 mount point hysteresis
                                 r2mphtrs = mp_use1_km + int(configp["data"]["htrs"])
                                 if Decimal(configp["data"]["dist_r2mp"]) < r2mphtrs:
-                                    print("**INFO: Hysteresis MP 2 MP running: ",r2mphtrs,"km")
+                                    print("INFO: Hysteresis MP 2 MP running: ",r2mphtrs,"km")
                                 else:
                                     movetobase()
                                     savelog()
                         else:
                             print(
-                                "**INFO:",mp_use1," nearby: ",Decimal(configp["data"]["dist_r2mp"]),
+                                "INFO:",mp_use1," nearby: ",Decimal(configp["data"]["dist_r2mp"]),
                                 " But critical distance not reached: ",configp["data"]["mp_km_crit"],"km")
                     if configp["data"]["mp_use"] == mp_use1:
-                        print("**INFO: Always connected to ",mp_use1)
+                        print("INFO: Always connected to ",mp_use1)
         except serial.SerialException as e:
             #print('Device error: {}'.format(e))
             continue
