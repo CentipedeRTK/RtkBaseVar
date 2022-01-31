@@ -16,7 +16,7 @@ from datetime import datetime
 import config
 import configparser
 
-##global varible loops
+##global variable loops
 loop_str = None
 
 ## import and edit .ini
@@ -140,8 +140,11 @@ def notas(mensagem):
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
     configp.read('param.ini')
+    presentday = datetime.now()
     mes=("Connected to Mount Point: \n*"+configp["data"]["mp_use"]+ "*\n" +
-    "Last distance between Rover/Base: \n*"+configp["data"]["dist_r2mp"]+"*km" + "\n\n" + "Parameters:\n"
+    "Last distance between Rover/Base: \n*"+configp["data"]["dist_r2mp"]+" km "+
+    presentday.strftime('%Y-%m-%d') +" "+configp["coordinates"]["time"]+"*"
+    + "\n\n" + "Parameters:\n"
     "*/excl* Bases GNSS exclude: *"+configp["data"]["exc_mp"]+ "*\n" +
     "*/dist* Max search distance of bases: *"+configp["data"]["maxdist"]+"*km"+ "\n" +
     "*/crit* Maximum distance before base change: *"+ configp["data"]["mp_km_crit"] +"*km" + "\n" +
@@ -188,8 +191,8 @@ def movetobase():
     ##Metadata
     presentday = datetime.now()
     configp["message"]["message"] = ("Move to base ," + str(mp_use1) +","+
-    str(round(mp_use1_km,2))+","+str(round(config.rlat,7))+","+
-    str(round(config.rlon,7))+","+ presentday.strftime('%Y-%m-%d') +" "+str(config.rtime))
+    str(round(mp_use1_km,2))+","+configp["coordinates"]["lat"]+","+
+    configp["coordinates"]["lon"]+","+ presentday.strftime('%Y-%m-%d') +" "+configp["coordinates"]["time"])
     editparam()
     telegrambot()
 
@@ -202,7 +205,7 @@ def ntripbrowser():
     global mp_Carrier
     ## 2-Get caster sourcetable
     browser = (NtripBrowser(configp["caster"]["adrs"], port=configp["caster"]["port"],
-    timeout=10,coordinates=(config.rlat,config.rlon),
+    timeout=10,coordinates=(Decimal(configp["coordinates"]["lat"]),Decimal(configp["coordinates"]["lon"])),
     maxdist=int(configp["data"]["maxdist"]) ))
     getmp= browser.get_mountpoints()
     flt = getmp['str']
@@ -220,12 +223,12 @@ def ntripbrowser():
             mp_use1 = value["Mountpoint"]
             mp_use1_km = value["Distance"]
             mp_Carrier = value["Carrier"]
-            print(
-                "INFO: Nearest base is ",mp_use1,
-                round(mp_use1_km,2),"km; Carrier:",mp_Carrier)
-            print(
-                "INFO: Distance between Rover & connected base ",
-                configp["data"]["mp_use"],Decimal(configp["data"]["dist_r2mp"]),"km")
+            # print(
+            #     "INFO: Nearest base is ",mp_use1,
+            #     round(mp_use1_km,2),"km; Carrier:",mp_Carrier)
+            # print(
+            #     "INFO: Distance between Rover & connected base ",
+            #     configp["data"]["mp_use"],Decimal(configp["data"]["dist_r2mp"]),"km")
 
     ## Value on connected base
     flt_r2mp = [m for m in flt if m['Mountpoint']==configp["data"]["mp_use"]]
@@ -260,19 +263,20 @@ def loop_mp():
                 movetobase()
                 savelog()
             else:
-                print("INFO: Connected to ",configp["data"]["mp_use"],", Waiting for the rover's geographical coordinates......")
+                # print("INFO: Connected to ",configp["data"]["mp_use"],", Waiting for the rover's geographical coordinates......")
                 ## 1-Analyse nmea from gnss ntripclient for get lon lat
                 ##TODO after x min reset parameters
                 line = config.sio.readline()
                 msg = pynmea2.parse(line)
                 ## Exclude bad longitude
-                if msg.longitude != config.lon:
+                if msg.longitude != 0.0:
                     ## LOG coordinate from Rover
-                    config.rlat = msg.latitude
-                    config.rlon = msg.longitude
-                    config.rtime = msg.timestamp
+                    configp["coordinates"]["lat"] = str(round(msg.latitude,7))
+                    configp["coordinates"]["lon"] = str(round(msg.longitude,7))
+                    configp["coordinates"]["time"] = str(msg.timestamp)
+                    editparam()
                     print("------")
-                    print("ROVER: ",config.rlat,config.rlon,msg.timestamp)
+                    print("ROVER: ",configp["coordinates"]["lat"],configp["coordinates"]["lon"],configp["coordinates"]["time"])
                     print("------")
                     ## 2-Get caster sourcetable
                     ntripbrowser()
@@ -305,10 +309,10 @@ def loop_mp():
         except pynmea2.ParseError as e:
             #print('Parse error: {}'.format(e))
             continue
-        except Exception as exc:
-            print("Caster adresses problem or Caster down!!!!!!!!")
-            time.sleep(3)
-            pass
+        # except Exception as exc:
+        #     print("Caster adresses problem or Caster down!!!!!!!!")
+        #     time.sleep(3)
+        #     pass
 
 ## stop loop for change parameters (.ini)
 def stoptowrite():
