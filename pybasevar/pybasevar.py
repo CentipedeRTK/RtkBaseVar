@@ -34,6 +34,8 @@ editparam()
 configp.read('param.ini')
 bot = telebot.TeleBot(configp["telegram"]["api_key"])
 
+##Telegram messages
+#restart loop
 @bot.message_handler(commands=['restart'])
 def send_restart(message):
     configp.read('param.ini')
@@ -176,6 +178,13 @@ def processSetLogE(message):
 #     else:
 #         bot.reply_to(message, 'Oooops bad value!')
 
+#show last coordinates / map
+@bot.message_handler(commands=['map'])
+def send_map(message):
+    configp.read('param.ini')
+    telegrambot()
+    telegramlocation()
+
 #principal messsage
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
@@ -189,9 +198,30 @@ def echo_all(message):
     "*/dist* Max search distance of bases: \n*"+configp["data"]["maxdist"]+"*km"+ "\n" +
     "*/crit* Max distance before base change: \n*"+ configp["data"]["mp_km_crit"] +"*km" + "\n" +
     "*/htrs* Hysteresis: *"+configp["data"]["htrs"]+"*km"+ "\n\n" +
+    "*/map* Show last position\n"
     "*/log*    Download change logs\n" +
     "*/clear* Delete logs")
     bot.reply_to(message,mes,parse_mode= 'Markdown')
+
+#Get position and map
+def telegramlocation():
+    global bot1
+    if len(sys.argv) >= 2:
+        presentday = datetime.now()
+        configp.read('param.ini')
+        bot1 = telegram.Bot(token=configp["telegram"]["api_key"])
+        bot1.send_message(chat_id=configp["telegram"]["user_id"],text=
+            configp["coordinates"]["lat"]+","+
+            configp["coordinates"]["lon"]+","+
+            presentday.strftime('%Y-%m-%d')+" "+configp["coordinates"]["time"])
+        bot1.send_location(chat_id=configp["telegram"]["user_id"],
+            longitude=configp["coordinates"]["lon"],
+            latitude=configp["coordinates"]["lat"],
+            live_period=80,
+            horizontal_accuracy=configp["coordinates"]["hdop"],
+            heading=90,
+            proximity_alert_radius=100,
+            protect_content=True,)
 
 #Automatic message on base change with pytelegrambot (BUG with telebot)
 def telegrambot():
@@ -211,9 +241,9 @@ def telegrambot2():
 ##Create user log file
 def createlog():
     global logname
-    logname = "basevarlog_"+configp["telegram"]["user_id"]+".csv"
-    with open(logname, 'x') as f:
-        f.write('action,base,distance,lat,lon,date\n')
+    logname = "logs/basevarlog_"+configp["telegram"]["user_id"]+".csv"
+    with open(logname, 'w') as f:
+        f.write('action,base,distance,lat,lon,date,quality,hdop,alt,idsta\n')
         f.close
 
 ##Save LOG
@@ -244,11 +274,20 @@ def movetobase():
     start_in_str2str()
     ##Metadata
     presentday = datetime.now()
-    configp["message"]["message"] = ("Move to base ," + str(mp_use1) +","+
-    str(round(mp_use1_km,2))+","+configp["coordinates"]["lat"]+","+
-    configp["coordinates"]["lon"]+","+ presentday.strftime('%Y-%m-%d') +" "+configp["coordinates"]["time"])
+    configp["message"]["message"] = ("Move to base ," +
+    str(mp_use1) +","+
+    str(round(mp_use1_km,2))+","+
+    configp["coordinates"]["lat"]+","+
+    configp["coordinates"]["lon"]+","+
+    presentday.strftime('%Y-%m-%d')+" "+
+    configp["coordinates"]["time"]+","+
+    configp["coordinates"]["type"]+","+
+    configp["coordinates"]["hdop"]+","+
+    configp["coordinates"]["alt"]+","+
+    configp["coordinates"]["idsta"])
     editparam()
     telegrambot()
+    telegramlocation()
 
 def ntripbrowser():
     global browser
@@ -328,6 +367,10 @@ def loop_mp():
                     configp["coordinates"]["lat"] = str(round(msg.latitude,7))
                     configp["coordinates"]["lon"] = str(round(msg.longitude,7))
                     configp["coordinates"]["time"] = str(msg.timestamp)
+                    configp["coordinates"]["type"] = str(msg.gps_qual)
+                    configp["coordinates"]["hdop"] = str(msg.horizontal_dil)
+                    configp["coordinates"]["alt"] = str(msg.altitude)
+                    configp["coordinates"]["idsta"] = str(msg.ref_station_id)
                     editparam()
                     print("------")
                     print("ROVER: ",configp["coordinates"]["lat"],configp["coordinates"]["lon"],configp["coordinates"]["time"])
@@ -445,6 +488,7 @@ def start_loop_basevar():
 def main():
     createlog()
     telegrambot2()
+    telegramlocation()
     # start_socat()
     start_out_str2str()
     start_in_str2str()
