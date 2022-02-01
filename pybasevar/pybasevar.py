@@ -18,6 +18,7 @@ import configparser
 
 ##global variable loops
 loop_str = None
+mp_use1 = "CT"
 
 ## import and edit .ini
 configp = configparser.ConfigParser()
@@ -211,7 +212,7 @@ def telegramlocation():
         configp.read('param.ini')
         bot1 = telegram.Bot(token=configp["telegram"]["api_key"])
         bot1.send_message(chat_id=configp["telegram"]["user_id"],text=
-            configp["coordinates"]["lat"]+","+
+            "Rover position: "+configp["coordinates"]["lat"]+","+
             configp["coordinates"]["lon"]+","+
             presentday.strftime('%Y-%m-%d')+" "+configp["coordinates"]["time"])
         bot1.send_location(chat_id=configp["telegram"]["user_id"],
