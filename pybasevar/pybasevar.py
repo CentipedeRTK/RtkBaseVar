@@ -133,8 +133,23 @@ def processSetCasterPortE(message):
 @bot.message_handler(commands=['log'])
 def notas(mensagem):
     mensagemID = mensagem.chat.id
-    doc = open('basevarlog.csv', 'rb')
+    doc = open(logname, 'rb')
     bot.send_document(mensagemID, doc)
+
+#clear log
+@bot.message_handler(commands=['clear'])
+def send_logE(message):
+    configp.read('param.ini')
+    msg = bot.reply_to(message,"Do you really want to delete the logs? (Yes/No)")
+    bot.register_next_step_handler(msg, processSetLogE)
+def processSetLogE(message):
+    answer = message.text
+    if answer == "Yes":
+        print(answer)
+        clearlog()
+        bot.reply_to(message,"The log file is now empty")
+    else:
+        bot.reply_to(message, 'Ok, logs kept in state. Bye!')
 
 #principal messsage
 @bot.message_handler(func=lambda message: True)
@@ -145,11 +160,12 @@ def echo_all(message):
     "Last distance between Rover/Base: \n*"+configp["data"]["dist_r2mp"]+" km "+
     presentday.strftime('%Y-%m-%d') +" "+configp["coordinates"]["time"]+"*"
     + "\n\n" + "Parameters:\n"
-    "*/excl* Bases GNSS exclude: *"+configp["data"]["exc_mp"]+ "*\n" +
-    "*/dist* Max search distance of bases: *"+configp["data"]["maxdist"]+"*km"+ "\n" +
-    "*/crit* Maximum distance before base change: *"+ configp["data"]["mp_km_crit"] +"*km" + "\n" +
+    "*/excl* Bases GNSS exclude: \n*"+configp["data"]["exc_mp"]+ "*\n" +
+    "*/dist* Max search distance of bases: \n*"+configp["data"]["maxdist"]+"*km"+ "\n" +
+    "*/crit* Max distance before base change: \n*"+ configp["data"]["mp_km_crit"] +"*km" + "\n" +
     "*/htrs* Hysteresis: *"+configp["data"]["htrs"]+"*km"+ "\n\n" +
-    "*/log*  Download GNSS base change logs")
+    "*/log*    Download change logs\n" +
+    "*/clear* Delete logs")
     bot.reply_to(message,mes,parse_mode= 'Markdown')
 
 #Automatic message on base change with pytelegrambot (BUG with telebot)
@@ -167,12 +183,25 @@ def telegrambot2():
         bot2 = telegram.Bot(token=configp["telegram"]["api_key"])
         bot2.send_message(chat_id=configp["telegram"]["user_id"], text=configp["message"]["message2"])
 
+##Create user log file
+def createlog():
+    global logname
+    logname = "basevarlog_"+configp["telegram"]["user_id"]+".csv"
+    with open(logname, 'x') as f:
+        f.write('action,base,distance,lat,lon,date\n')
+        f.close
+
 ##Save LOG
 def savelog():
     ##log in file
-    file = open("basevarlog.csv", "a")
+    file = open(logname, "a")
     file.write(configp["message"]["message"] +'\n')
     file.close
+
+#Delete logs
+def clearlog():
+    os.remove(logname)
+    createlog()
 
 def movetobase():
     ## Build new str2str_in command
@@ -389,6 +418,7 @@ def start_loop_basevar():
     loop_str.start()
 
 def main():
+    createlog()
     telegrambot2()
     # start_socat()
     start_out_str2str()
