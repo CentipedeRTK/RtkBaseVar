@@ -151,6 +151,31 @@ def processSetLogE(message):
     else:
         bot.reply_to(message, 'Ok, logs kept in state. Bye!')
 
+# #Manual coordinates change
+# @bot.message_handler(commands=['coor'])
+# def send_coorE(message):
+#     configp.read('param.ini')
+#     msg = bot.reply_to(message,"Edit coordinates:\n old value:\nlat: "+configp["coordinates"]["lat"]+","+configp["coordinates"]["lon"]+"\n Enter New latitude : ")
+#     bot.register_next_step_handler(msg, processSetLatE)
+# def processSetLatE(message):
+#     answer = message.text
+#     if answer.isnumeric():
+#         print(answer)
+#         configp["coordinates"]["lat"] = answer
+#         msg = bot.reply_to(message,"Enter New latitude :")
+#         bot.register_next_step_handler(msg, processSetLonE)
+#     else:
+#         bot.reply_to(message, 'Oooops bad value!')
+# def processSetLonE(message):
+#     answer = message.text
+#     if answer.isnumeric():
+#         print(answer)
+#         configp["coordinates"]["lon"] = answer
+#         stoptowrite()
+#         bot.reply_to(message,"NEW coordinates: "+configp["coordinates"]["lat"]+","+configp["coordinates"]["lon"])
+#     else:
+#         bot.reply_to(message, 'Oooops bad value!')
+
 #principal messsage
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
