@@ -21,7 +21,6 @@ import os.path
 loop_str = None
 mp_use1 = "CT"
 
-
 ## activate .ini
 configp = configparser.ConfigParser()
 ##Param.ini
