@@ -1,4 +1,3 @@
-import io
 import serial
 import pynmea2
 import time
@@ -34,7 +33,6 @@ configp["telegram"]["user_id"] = str( sys.argv[2] )
 editparam()
 configp.read('param.ini')
 bot = telebot.TeleBot(configp["telegram"]["api_key"])
-bot1 = telegram.Bot(token=configp["telegram"]["api_key"])
 
 ##Telegram messages
 #restart loop
@@ -184,8 +182,9 @@ def processSetLogE(message):
 @bot.message_handler(commands=['map'])
 def send_map(message):
     configp.read('param.ini')
-    telegrambot()
+    telegramposition()
     telegramlocation()
+    telegrambot()
 
 #principal messsage
 @bot.message_handler(func=lambda message: True)
@@ -208,40 +207,46 @@ def echo_all(message):
 def telegramposition():
     if len(sys.argv) >= 2:
         configp.read('param.ini')
-        bot1.send_message(chat_id=configp["telegram"]["user_id"],text=
-            "Rover position: "+configp["coordinates"]["lat"]+","+
-            configp["coordinates"]["lon"]+","+
-            configp["coordinates"]["date"]+" "+configp["coordinates"]["time"])
+        bot.send_message(configp["telegram"]["user_id"],"Last Rover position: \n"+
+            configp["coordinates"]["lat"]+","+
+            configp["coordinates"]["lon"]+"\n"+
+            configp["coordinates"]["date"]+" "+configp["coordinates"]["time"]+"\n"+
+            "Fix quality: "+configp["coordinates"]["type"]+"\n"+
+            "HDOP:        "+configp["coordinates"]["hdop"]+"\n"+
+            "Elevation:   "+configp["coordinates"]["elv"]+"\n"+
+            "ID station:  "+configp["coordinates"]["idsta"])
 
 def telegramlocation():
     if len(sys.argv) >= 2:
         configp.read('param.ini')
-        bot1.send_location(chat_id=configp["telegram"]["user_id"],
+        bot.send_location(configp["telegram"]["user_id"],
             longitude=configp["coordinates"]["lon"],
             latitude=configp["coordinates"]["lat"],
-            live_period=80,
-            horizontal_accuracy=configp["coordinates"]["hdop"],
-            heading=90,
-            proximity_alert_radius=100,
-            protect_content=True,)
+            live_period=None, reply_to_message_id=None,
+            reply_markup=None, disable_notification=None,
+            timeout=None, horizontal_accuracy=configp["coordinates"]["hdop"],
+            heading=None,
+            proximity_alert_radius=None, allow_sending_without_reply=None,
+            protect_content=None)
 
-#Automatic message on base change with pytelegrambot (BUG with telebot)
+#Automatic message on base change with pytelegrambot (BUG ssl use python-telegram-bot not pyTelegramBotAPI )
 def telegrambot():
     if len(sys.argv) >= 2:
         configp.read('param.ini')
-        bot1.send_message(chat_id=configp["telegram"]["user_id"], text=configp["message"]["message"])
+        bot1 = telegram.Bot(token=configp["telegram"]["api_key"])
+        bot1.send_message(configp["telegram"]["user_id"], configp["message"]["message"])
 
 def telegrambot2():
     if len(sys.argv) >= 2:
         configp.read('param.ini')
-        bot1.send_message(chat_id=configp["telegram"]["user_id"], text=configp["message"]["message2"])
+        bot.send_message(configp["telegram"]["user_id"], configp["message"]["message2"])
 
 ##Create user log file
 def createlog():
     global logname
     logname = "logs/basevarlog_"+configp["telegram"]["user_id"]+".csv"
     with open(logname, 'w') as f:
-        f.write('action,base,distance,lat,lon,date,quality,hdop,alt,idsta\n')
+        f.write('action,base,distance,lat,lon,date,quality,hdop,elv,idsta\n')
         f.close
 
 ##Save LOG
@@ -280,11 +285,11 @@ def movetobase():
     configp["coordinates"]["time"]+","+
     configp["coordinates"]["type"]+","+
     configp["coordinates"]["hdop"]+","+
-    configp["coordinates"]["alt"]+","+
+    configp["coordinates"]["elv"]+","+
     configp["coordinates"]["idsta"])
     editparam()
     telegrambot()
-    telegramlocation()
+    # telegramlocation()
 
 def ntripbrowser():
     global browser
@@ -334,7 +339,6 @@ def ntripbrowser():
     #     car = i["Carrier"]
     #     print(mp,di,"km; Carrier:", car)
 
-
 ## 03-START loop to check base alive + rover position and nearest base
 def loop_mp():
     while True:
@@ -368,7 +372,7 @@ def loop_mp():
                     configp["coordinates"]["time"] = str(msg.timestamp)
                     configp["coordinates"]["type"] = str(msg.gps_qual)
                     configp["coordinates"]["hdop"] = str(msg.horizontal_dil)
-                    configp["coordinates"]["alt"] = str(msg.altitude)
+                    configp["coordinates"]["elv"] = str(msg.altitude)
                     configp["coordinates"]["idsta"] = str(msg.ref_station_id)
                     editparam()
                     print("------")
