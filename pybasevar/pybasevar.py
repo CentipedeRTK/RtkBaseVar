@@ -14,38 +14,48 @@ import multiprocessing
 from datetime import datetime
 import config
 import configparser
+import shutil
+import os.path
 
 ##global variable loops
 loop_str = None
 mp_use1 = "CT"
 
-## import and edit .ini
+## activate .ini
 configp = configparser.ConfigParser()
-configp.read('param.ini')
+##Param.ini
+paramname = "param/param_"+str( sys.argv[2] )+".ini"
+##Create user param file
+if os.path.isfile(paramname):
+    print(paramname, " already exist")
+else:
+    shutil.copy('param.ini', paramname)
+    print("Creating ",paramname)
+configp.read(paramname)
 
 def editparam():
-    with open('param.ini','w') as configfile:
+    with open(paramname,'w') as configfile:
         configp.write(configfile)
 
 ##TElegram param
 configp["telegram"]["api_key"] = str( sys.argv[1] )
 configp["telegram"]["user_id"] = str( sys.argv[2] )
 editparam()
-configp.read('param.ini')
+configp.read(paramname)
 bot = telebot.TeleBot(configp["telegram"]["api_key"])
 
 ##Telegram messages
 #restart loop
 @bot.message_handler(commands=['restart'])
 def send_restart(message):
-    configp.read('param.ini')
+    configp.read(paramname)
     bot.reply_to(message, 'Restarting SERVICE......')
     restartbasevar()
 
 #base filter
 @bot.message_handler(commands=['excl'])
 def send_exclE(message):
-    configp.read('param.ini')
+    configp.read(paramname)
     msg = bot.reply_to(message,"Edit exclude Base(s):\n old value:"+configp["data"]["exc_mp"]+",\n Enter the new value ! ")
     bot.register_next_step_handler(msg, processSetExclE)
 def processSetExclE(message):
@@ -61,7 +71,7 @@ def processSetExclE(message):
 #hysteresis
 @bot.message_handler(commands=['htrs'])
 def send_htrsE(message):
-    configp.read('param.ini')
+    configp.read(paramname)
     msg = bot.reply_to(message,"Edit Hysteresis:\n old value:"+configp["data"]["htrs"]+"km,\n Enter the new value ! ")
     bot.register_next_step_handler(msg, processSetHtrsE)
 def processSetHtrsE(message):
@@ -77,7 +87,7 @@ def processSetHtrsE(message):
 #Critical distance
 @bot.message_handler(commands=['crit'])
 def send_critE(message):
-    configp.read('param.ini')
+    configp.read(paramname)
     msg = bot.reply_to(message,"Edit Maximum distance before GNSS base change:\n Old value:"+configp["data"]["mp_km_crit"]+"km,\n Enter the new value ! ")
     bot.register_next_step_handler(msg, processSetCritE)
 def processSetCritE(message):
@@ -93,14 +103,14 @@ def processSetCritE(message):
 #search distance
 @bot.message_handler(commands=['dist'])
 def send_distE(message):
-    configp.read('param.ini')
+    configp.read(paramname)
     msg = bot.reply_to(message,"Edit Max search distance of GNSS bases saved:\n old value:"+configp["data"]["maxdist"]+"km")
     bot.register_next_step_handler(msg, processSetDistE)
 def processSetDistE(message):
     answer = message.text
     if answer.isdigit():
         print(answer)
-        configp["caster"]["adrs"] = answer
+        configp["data"]["maxdist"] = answer
         stoptowrite()
         bot.reply_to(message,"NEW Max search distance: "+configp["data"]["maxdist"]+"km")
     else:
@@ -109,7 +119,7 @@ def processSetDistE(message):
 #caster
 @bot.message_handler(commands=['caster'])
 def send_casterE(message):
-    configp.read('param.ini')
+    configp.read(paramname)
     msg = bot.reply_to(message,"Edit caster adress and port:\n old value:\n"+configp["caster"]["adrs"]+":"+configp["caster"]["port"]+"\n Enter caster adress: ")
     bot.register_next_step_handler(msg, processSetCasterE)
 def processSetCasterE(message):
@@ -141,7 +151,7 @@ def notas(mensagem):
 #clear log
 @bot.message_handler(commands=['clear'])
 def send_logE(message):
-    configp.read('param.ini')
+    configp.read(paramname)
     msg = bot.reply_to(message,"Do you really want to delete the logs? (Yes/No)")
     bot.register_next_step_handler(msg, processSetLogE)
 def processSetLogE(message):
@@ -156,7 +166,7 @@ def processSetLogE(message):
 # #Manual coordinates change
 # @bot.message_handler(commands=['coor'])
 # def send_coorE(message):
-#     configp.read('param.ini')
+#     configp.read(paramname)
 #     msg = bot.reply_to(message,"Edit coordinates:\n old value:\nlat: "+configp["coordinates"]["lat"]+","+configp["coordinates"]["lon"]+"\n Enter New latitude : ")
 #     bot.register_next_step_handler(msg, processSetLatE)
 # def processSetLatE(message):
@@ -181,14 +191,14 @@ def processSetLogE(message):
 #show last coordinates / map
 @bot.message_handler(commands=['map'])
 def send_map(message):
-    configp.read('param.ini')
+    configp.read(paramname)
     telegramposition()
     telegramlocation()
 
 #principal messsage
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
-    configp.read('param.ini')
+    configp.read(paramname)
     mes=("Connected to Mount Point: \n*"+configp["data"]["mp_use"]+ "*\n" +
     "Last distance between Rover/Base: \n*"+configp["data"]["dist_r2mp"]+" km "+
     configp["coordinates"]["date"]+" "+configp["coordinates"]["time"]+"*"
@@ -205,7 +215,7 @@ def echo_all(message):
 #Get position and map
 def telegramposition():
     if len(sys.argv) >= 2:
-        configp.read('param.ini')
+        configp.read(paramname)
         bot.send_message(configp["telegram"]["user_id"],"Last Rover position: \n"+
             configp["coordinates"]["lat"]+","+
             configp["coordinates"]["lon"]+"\n"+
@@ -218,7 +228,7 @@ def telegramposition():
 
 def telegramlocation():
     if len(sys.argv) >= 2:
-        configp.read('param.ini')
+        configp.read(paramname)
         bot.send_location(configp["telegram"]["user_id"],
             longitude=configp["coordinates"]["lon"],
             latitude=configp["coordinates"]["lat"],
@@ -232,19 +242,21 @@ def telegramlocation():
 #Automatic message on base change with pytelegrambot (BUG ssl use python-telegram-bot not pyTelegramBotAPI )
 def telegrambot():
     if len(sys.argv) >= 2:
-        configp.read('param.ini')
+        configp.read(paramname)
         bot1 = telegram.Bot(token=configp["telegram"]["api_key"])
         bot1.send_message(configp["telegram"]["user_id"], configp["message"]["message"])
 
 def telegrambot2():
     if len(sys.argv) >= 2:
-        configp.read('param.ini')
-        bot.send_message(configp["telegram"]["user_id"], configp["message"]["message2"])
+        configp.read(paramname)
+        bot.send_message(configp["telegram"]["user_id"], configp["message"]["message2"]
+            +"\nYou are connected to base "+configp["data"]["mp_use"])
 
 ##Create user log file
 def createlog():
     global logname
     logname = "logs/basevarlog_"+configp["telegram"]["user_id"]+".csv"
+    editparam()
     with open(logname, 'w') as f:
         f.write('action,base,distance,lat,lon,date,quality,hdop,elv,idsta\n')
         f.close
@@ -347,7 +359,7 @@ def loop_mp():
             global mp_use1_km
             global msg
             ##get variables
-            configp.read('param.ini')
+            configp.read(paramname)
             ##Get data from Caster
             ntripbrowser()
             ##My base is Alive?
@@ -456,7 +468,7 @@ def str2str_out():
 
 def str2str_in():
     global str2str_in
-    configp.read('param.ini')
+    configp.read(paramname)
     bashstr = config.stream1+configp["data"]["mp_use"]+config.stream2
     str2str_in = subprocess.Popen(bashstr.split())
 
