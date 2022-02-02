@@ -34,6 +34,7 @@ configp["telegram"]["user_id"] = str( sys.argv[2] )
 editparam()
 configp.read('param.ini')
 bot = telebot.TeleBot(configp["telegram"]["api_key"])
+bot1 = telegram.Bot(token=configp["telegram"]["api_key"])
 
 ##Telegram messages
 #restart loop
@@ -190,10 +191,9 @@ def send_map(message):
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
     configp.read('param.ini')
-    presentday = datetime.now()
     mes=("Connected to Mount Point: \n*"+configp["data"]["mp_use"]+ "*\n" +
     "Last distance between Rover/Base: \n*"+configp["data"]["dist_r2mp"]+" km "+
-    presentday.strftime('%Y-%m-%d') +" "+configp["coordinates"]["time"]+"*"
+    configp["coordinates"]["date"]+" "+configp["coordinates"]["time"]+"*"
     + "\n\n" + "Parameters:\n"
     "*/excl* Bases GNSS exclude: \n*"+configp["data"]["exc_mp"]+ "*\n" +
     "*/dist* Max search distance of bases: \n*"+configp["data"]["maxdist"]+"*km"+ "\n" +
@@ -205,16 +205,17 @@ def echo_all(message):
     bot.reply_to(message,mes,parse_mode= 'Markdown')
 
 #Get position and map
-def telegramlocation():
-    global bot1
+def telegramposition():
     if len(sys.argv) >= 2:
-        presentday = datetime.now()
         configp.read('param.ini')
-        bot1 = telegram.Bot(token=configp["telegram"]["api_key"])
         bot1.send_message(chat_id=configp["telegram"]["user_id"],text=
             "Rover position: "+configp["coordinates"]["lat"]+","+
             configp["coordinates"]["lon"]+","+
-            presentday.strftime('%Y-%m-%d')+" "+configp["coordinates"]["time"])
+            configp["coordinates"]["date"]+" "+configp["coordinates"]["time"])
+
+def telegramlocation():
+    if len(sys.argv) >= 2:
+        configp.read('param.ini')
         bot1.send_location(chat_id=configp["telegram"]["user_id"],
             longitude=configp["coordinates"]["lon"],
             latitude=configp["coordinates"]["lat"],
@@ -226,18 +227,14 @@ def telegramlocation():
 
 #Automatic message on base change with pytelegrambot (BUG with telebot)
 def telegrambot():
-    global bot1
     if len(sys.argv) >= 2:
         configp.read('param.ini')
-        bot1 = telegram.Bot(token=configp["telegram"]["api_key"])
         bot1.send_message(chat_id=configp["telegram"]["user_id"], text=configp["message"]["message"])
 
 def telegrambot2():
-    global bot2
     if len(sys.argv) >= 2:
         configp.read('param.ini')
-        bot2 = telegram.Bot(token=configp["telegram"]["api_key"])
-        bot2.send_message(chat_id=configp["telegram"]["user_id"], text=configp["message"]["message2"])
+        bot1.send_message(chat_id=configp["telegram"]["user_id"], text=configp["message"]["message2"])
 
 ##Create user log file
 def createlog():
@@ -274,13 +271,12 @@ def movetobase():
     time.sleep(2)
     start_in_str2str()
     ##Metadata
-    presentday = datetime.now()
     configp["message"]["message"] = ("Move to base ," +
     str(mp_use1) +","+
     str(round(mp_use1_km,2))+","+
     configp["coordinates"]["lat"]+","+
     configp["coordinates"]["lon"]+","+
-    presentday.strftime('%Y-%m-%d')+" "+
+    configp["coordinates"]["date"]+" "+
     configp["coordinates"]["time"]+","+
     configp["coordinates"]["type"]+","+
     configp["coordinates"]["hdop"]+","+
@@ -365,8 +361,10 @@ def loop_mp():
                 ## Exclude bad longitude
                 if msg.longitude != 0.0:
                     ## LOG coordinate from Rover
+                    presentday = datetime.now()
                     configp["coordinates"]["lat"] = str(round(msg.latitude,7))
                     configp["coordinates"]["lon"] = str(round(msg.longitude,7))
+                    configp["coordinates"]["date"] = str(presentday.strftime('%Y-%m-%d'))
                     configp["coordinates"]["time"] = str(msg.timestamp)
                     configp["coordinates"]["type"] = str(msg.gps_qual)
                     configp["coordinates"]["hdop"] = str(msg.horizontal_dil)
