@@ -184,7 +184,6 @@ def send_map(message):
     configp.read('param.ini')
     telegramposition()
     telegramlocation()
-    telegrambot()
 
 #principal messsage
 @bot.message_handler(func=lambda message: True)
@@ -214,7 +213,8 @@ def telegramposition():
             "Fix quality: "+configp["coordinates"]["type"]+"\n"+
             "HDOP:        "+configp["coordinates"]["hdop"]+"\n"+
             "Elevation:   "+configp["coordinates"]["elv"]+"\n"+
-            "ID station:  "+configp["coordinates"]["idsta"])
+            "ID station:  "+configp["coordinates"]["idsta"]+"\n"+
+            "Connected to "+configp["data"]["mp_use"])
 
 def telegramlocation():
     if len(sys.argv) >= 2:
