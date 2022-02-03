@@ -32,7 +32,11 @@ RtkBaseVar is written in Python, its deployment is done by Docker container. It 
   * Ability to purge logs
   * Restart of services
 
-## Connect the Rover Ntripclient
+## Telegram
+
+[Telegram](https://telegram.org/) is a messaging application focused on speed and security, it is ultra-fast, simple and free. It is essential to have Telegram to set up your RtkBaseVar session and receive notifications of station changes, it replaces an web interface.
+
+## Connect the Rover Ntripclient to your RtkBaseVar session
 
 Your Rover or NTRIP client must be able to send an NMEA GGA frame to the Caster to retrieve your position.
 * [Lefebure](https://play.google.com/store/apps/details?id=com.lefebure.ntripclient&hl=fr&gl=fr) :x:
@@ -46,9 +50,9 @@ Your Rover or NTRIP client must be able to send an NMEA GGA frame to the Caster 
 Connect your Rover's NTRIPclient to your RtkBaseVar session:
 
 * Adresse: IP or DNS
-* Port: 9999
+* Port: 9999 or other
 * Mount name: ME
-* No login & pasword
+* No login & password
 
 ## Parameters
 
