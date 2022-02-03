@@ -32,11 +32,12 @@ RtkBaseVar is written in Python, its deployment is done by Docker container. It 
   * Ability to purge logs
   * Restart of services
 
- ![bot_start](./media/bot_start.png)
- ![bot_info](./media/bot_info.png)
+![bot_start](./media/bot_start.png)
+![bot_move&log](./media/bot_move&log.png)
 
- ![bot_map](./media/bot_map.png)
- ![bot_move&log](./media/bot_move&log.png)
+![bot_info](./media/bot_info.png)
+![bot_map](./media/bot_map.png)
+
 
 ## Rover Ntripclient
 
