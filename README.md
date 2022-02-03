@@ -92,7 +92,7 @@ Connect your Rover's NTRIPclient to your RtkBaseVar session:
 
 ## Install docker
 
-> The installation is possible without Docker by following the procedure in the [Dockerfile](https://raw.githubusercontent.com/jancelin/RtkBaseVar/main/dockerfile), attention to the integration of Telegram bot **APIKEY** and your **USERID**!
+> The installation is possible without Docker by following the procedure in the [Dockerfile](https://raw.githubusercontent.com/jancelin/RtkBaseVar/main/dockerfile), attention to the integration of Telegram bot **APIKEY** and your **USERID** in [./pybasevar/run.sh](https://raw.githubusercontent.com/jancelin/RtkBaseVar/main/pybasevar/run.sh).
 
 Docker is an open platform for developing, shipping, and running applications. Docker enables you to separate your applications from your infrastructure so you can deliver software quickly.
 
@@ -115,6 +115,7 @@ sudo pip install docker-compose
 
 ## First Build & Run:
 
+* Check that your server, router or PC has port 9999 open. It is possible to change the output port in the ```docker-compose.yml```
 * Clone RtkBaseVar repo
 ```
 git clone https://github.com/jancelin/RtkBaseVar.git
