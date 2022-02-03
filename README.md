@@ -63,8 +63,8 @@ Connect your Rover's NTRIPclient to your RtkBaseVar session:
 
 * [Socat](https://linux.die.net/man/1/socat) creates two virtual ports /dev/pts/1 and /dev/pts/2
 * Two data streams are created with rtklib [str2str](https://manpages.debian.org/unstable/rtklib/str2str.1.en.html):
-  * between the caster centipede ntrip://:@caster.centipede.fr:80/ + Mountpoint variable and the port pts/1
-  * between the pts/2 port and your personal caster ntripc://@:9999/ME
+  * between the caster centipede ```ntrip://:@caster.centipede.fr:80/``` + Mountpoint variable and the port ```pts/1```
+  * between the ```pts/2``` port and your personal caster ```ntripc://@:9999/ME```
 * A loop check continuously:
   * the status of stations within a defined distance
   * location data sent by the rover
@@ -92,9 +92,11 @@ Connect your Rover's NTRIPclient to your RtkBaseVar session:
 
 ## Install docker
 
+> The installation is possible without Docker by following the procedure in the [Dockerfile](https://raw.githubusercontent.com/jancelin/RtkBaseVar/main/dockerfile), attention to the integration of Telegram bot **APIKEY** and your **USERID**!
+
 Docker is an open platform for developing, shipping, and running applications. Docker enables you to separate your applications from your infrastructure so you can deliver software quickly.
 
-Install Docker et Docker-compose
+Install Docker et Docker-compose :
 
 ```
 sudo apt-get update
