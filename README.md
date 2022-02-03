@@ -57,6 +57,23 @@ Connect your Rover's NTRIPclient to your RtkBaseVar session:
 * Mount name: ME
 * No login & pasword
 
+## Parameters
+
+All parameters are editable by the Telegram bot, type any word or letter to access the parameter menu of RtkBaseVar. You can also write directly the action to ask the bot.
+
+![bot_info](./media/bot_info.png)
+
+* **/excl** : list of GNSS stations to exclude from the search. Always in uppercase and a space between the stations. ex: **CT LIENSS SLP NOVA**
+* **/dist** : Maximum search distance of a base. Enter a integer number in kilometres.
+* **/crit** : Maximum distance before changing stations. In the case of several stations close together, RtkBaseVar will remain on the same base as long as this distance is not crossed and this even if the user is closer to a new base. Enter an integer number in kilometres.
+* **/htrs** : Hysteresis, Distance to be added to /crit or if exceeded, to the distance between 2 bases. This allows you to avoid changing stations if you are working at equal distance between 2 stations. Enter an integer number in kilometres.
+
+* **/map** : Displays the last coordinates sent by the rover, the date, fix quality, HDOP, altitude, station id (when there is one) and on which base you are connected. A map allows to visualize this information easily.
+* **/log** : Download the station change log file for use as metadata with its collected data.
+* **/clear** : Clears the data from the log file for new data collection.
+
+* **/restart** : Restarts the service, this is useful if the service crashes due to a bug.
+
 # Installation
 
 ## How it works

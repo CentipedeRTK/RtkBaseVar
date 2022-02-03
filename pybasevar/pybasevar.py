@@ -222,7 +222,7 @@ def telegramposition():
             configp["coordinates"]["date"]+" "+configp["coordinates"]["time"]+"\n"+
             "Fix quality: "+configp["coordinates"]["type"]+"\n"+
             "HDOP:        "+configp["coordinates"]["hdop"]+"\n"+
-            "Elevation:   "+configp["coordinates"]["elv"]+"\n"+
+            "Altitude:    "+configp["coordinates"]["elv"]+"\n"+
             "ID station:  "+configp["coordinates"]["idsta"]+"\n"+
             "Connected to "+configp["data"]["mp_use"])
 
