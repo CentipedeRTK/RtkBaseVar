@@ -12,8 +12,8 @@ services:
       - ./RtkBaseVar/logs:/home/logs
       - ./RtkBaseVar/param:/home/param
     environment:
-      - APIKEY
-      - USERID
+      - APIKEY=
+      - USERID=
     logging:
         driver: "json-file"
         options:

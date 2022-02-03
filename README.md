@@ -39,7 +39,7 @@ RtkBaseVar is written in Python, its deployment is done by Docker container. It 
 ![bot_map](./media/bot_map.png)
 
 
-## Rover Ntripclient
+## Connect the Rover Ntripclient
 
 Your Rover or NTRIP client must be able to send an NMEA GGA frame to the Caster to retrieve your position.
 * [Lefebure](https://play.google.com/store/apps/details?id=com.lefebure.ntripclient&hl=fr&gl=fr) :x:
@@ -50,27 +50,40 @@ Your Rover or NTRIP client must be able to send an NMEA GGA frame to the Caster 
 * [RTKRCV](https://github.com/tomojitakasu/RTKLIB) :heavy_check_mark:
 * ...
 
-## Create a alert Telegram when Base GNSS change (option)
+Connect your Rover's NTRIPclient to your RtkBaseVar session:
+
+* Adresse: IP or DNS
+* Port: 9999
+* Mount name: ME
+* No login & pasword
+
+# Installation
+
+## Create a personal Telegram bot.
 
 * [Creating a Telegram bot account](https://usp-python.github.io/06-bot/)
-* Get your **APIKEY** and **USERID** and complete and complete the ```./basevar/.env``` file
-* Connect to your Telegram account and search ```@CentipedeBaseVar_bot```:
+![bot_father](./media/bot_father.png)
+* Connect to Telegram account, search and connect to the bot:
   * Click to **start**
   * Bot send you ```/start```
-  * It's Ok, you will receive a notification like this: ```Move to base ,LIENSS,8.15,46.1554417,-1.0540733,17:23:49``` when there is a change in Mount point.
+  * It's Ok, you will receive a notification and send messages.
 
+* Get your **APIKEY** and **USERID** and complete and complete the ```docker-compose.yml``` file
 
-## first Build & Run:
+## First Build & Run:
 
-```cd ./basevar```
+* Make sure you have edited the docker-compose.yml with the **APIKEY** and **USERID**
+* Clone repo
+```
+git clone https://github.com/jancelin/RtkBaseVar.git
+cd ./RtkBaseVar
+```
+
+* build RtkBaseVar
+```docker-compose build```
+
+* first start-up to see the logs and potential errors:
 ```docker-compose up```
-
-or first Build & Run as deamon:
-
-```cd ./basevar```
-```docker-compose up -d```
-
-## Connect your rover ntrip client
 
 * connect your ntripclient to:
   * Your ip or DNS
@@ -79,28 +92,5 @@ or first Build & Run as deamon:
 
 Now basevar get NMEA data from Rover every X seconds, check lon lat, research nearest Base GNSS on the caster Centipede and create a connexion.
 
-## Manual Build for dev
-
-```docker build -t basevar .```
-
- or
-
-```docker build -t basevar . --no-cache```
-
-### Run as demon
-
-```docker run -td --name caster_basevar -p 9999:9999  basevar```
-
-### Debug RUN
-
-```docker run -it  --rm --name caster_basevar -p 9999:9999 -v ./pybasevar:/home --entrypoint bash basevar```
-
-```sh /home/run.sh```
-
- or
-
-```docker run -it  --rm --name caster_basevar -p 9999:9999  basevar```
-
-### Debug inside container
-
-```docker exec -it caster_basevar bash```
+* Run as deamon
+```docker-compose up -d```
