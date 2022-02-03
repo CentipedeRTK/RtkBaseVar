@@ -62,15 +62,20 @@ Connect your Rover's NTRIPclient to your RtkBaseVar session:
 ## Create a personal Telegram bot.
 
 * [Creating a Telegram bot account](https://usp-python.github.io/06-bot/)
+  * First, we need to have a telegram account (bot) to access. Talk to @Botfather, a telegram bot by telegram to create telegram bots, to create a bot. Copy and paste the HTTP API somewhere
 
-![bot_father](./media/bot_father.png)
+  ![botfather](https://usp-python.github.io/img/06-botfather.png)
+
+  * You will also need to know your own telegram user ID, so the bot knows who to send messages to. Talk to @userinfobot to get this information. Once again, copy this information down somewhere.
+
+  ![userid](https://usp-python.github.io/img/06-userinfobot.png)
+
+* Save in a file your **APIKEY** and **USERID**
 
 * Connect to Telegram account, search and connect to the bot:
   * Click to **start**
   * Bot send you ```/start```
   * It's Ok, you will receive a notification and send messages.
-
-* Get your **APIKEY** and **USERID** and complete and complete the ```docker-compose.yml``` file
 
 ## First Build & Run:
 
@@ -92,7 +97,7 @@ cd ./RtkBaseVar
   * Port: 9999
   * Mount name: ME
 
-Now basevar get NMEA data from Rover every X seconds, check lon lat, research nearest Base GNSS on the caster Centipede and create a connexion.
+Now RtkBaseVar get NMEA data from Rover every X seconds, check lon lat, research nearest Base GNSS on the caster Centipede and create a connexion.
 
 * Run as deamon
 ```docker-compose up -d```
