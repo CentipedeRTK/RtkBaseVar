@@ -1,6 +1,38 @@
-# CENTIPEDE Caster Base Variable
+# **RtkBaseVar** Broadcasting the RTCM3 correction from the nearest RTK station
 
-Your ntripclient must be able to send its position:
+## Description
+
+GNSS station networks, also called CORS (Continuously Operating Reference Station), such as the CentipedeRTK network, use a point-to-point connection method. In short, a user must connect to a caster and choose the GNSS station (Mount point) in the network closest to his position. This method is restrictive because if the station is not available or if the user is travelling, such as by car, he/she has to change the Mount Point manually.
+
+RtkBaseVar is a personal RTCM3 correction caster for high precision RTK geolocation in mobility. It is an assistant that automatically connects you to the Mount Point closest to your position.
+
+RtkBaseVar is written in Python, its deployment is done by Docker container. It can be orchestrated for multiple sessions for multi-user use.
+
+## Features:
+
+* Connect to the nearest operating GNSS station.
+* Continuously check that the GNSS station is still active.
+* Change GNSS station:
+  * in case of power failure
+  * If a station is closer but with configurable rules.
+* Use a personal Telegram bot to communicate with it.
+* Communicates station changes by sending notifications to his smartphone.
+* Records these changes to make them available for download and use with GIS software like Qgis.
+* Can be dynamically configured and queried by asking questions to the Telegram bot.
+  * Exclusion of stations
+  * Maximum distance to search for a station
+  * Maximum distance before changing station
+  * Hysteresis on the maximum distance and between two distant stations
+  * Visualisation of the last coordinates sent by the Rover:
+    * Data
+    * Map
+  * Download of logs in .csv format
+  * Ability to purge logs
+  * Restart of services
+
+## Rover Ntripclient
+
+Your Rover or NTRIP client must be able to send an NMEA GGA frame to the Caster to retrieve your position.
 * [Lefebure](https://play.google.com/store/apps/details?id=com.lefebure.ntripclient&hl=fr&gl=fr) :x:
 * [BluetoothGNSS](https://play.google.com/store/apps/details?id=com.clearevo.bluetooth_gnss&hl=fr&gl=fr) :heavy_check_mark:
 * [Swmaps](https://play.google.com/store/apps/details?id=np.com.softwel.swmaps&hl=fr&gl=fr) :heavy_check_mark:
