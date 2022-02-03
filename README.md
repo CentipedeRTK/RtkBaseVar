@@ -62,7 +62,9 @@ Connect your Rover's NTRIPclient to your RtkBaseVar session:
 ## Create a personal Telegram bot.
 
 * [Creating a Telegram bot account](https://usp-python.github.io/06-bot/)
+
 ![bot_father](./media/bot_father.png)
+
 * Connect to Telegram account, search and connect to the bot:
   * Click to **start**
   * Bot send you ```/start```
@@ -72,12 +74,12 @@ Connect your Rover's NTRIPclient to your RtkBaseVar session:
 
 ## First Build & Run:
 
-* Make sure you have edited the docker-compose.yml with the **APIKEY** and **USERID**
 * Clone repo
 ```
 git clone https://github.com/jancelin/RtkBaseVar.git
 cd ./RtkBaseVar
 ```
+* Edit the docker-compose.yml with the Telegram bot **APIKEY** and your **USERID**
 
 * build RtkBaseVar
 ```docker-compose build```
