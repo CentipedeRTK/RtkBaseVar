@@ -1,6 +1,6 @@
 # **RtkBaseVar**
 
-Broadcasting the RTCM3 correction from the nearest RTK station
+🛰️ 🛰️ 🛰️ 🛰️ Broadcasting the RTCM3 correction from the nearest RTK station 📡 📍
 
 ## Description
 
@@ -60,7 +60,7 @@ Connect your Rover's NTRIPclient to your RtkBaseVar session:
 
 ![bot_info](./media/bot_info.png)
 
-* **/excl** : list of GNSS stations to exclude from the search. Always in uppercase and a space between the stations. ex: **CT LIENSS SLP NOVA**
+* **/excl** : List of GNSS stations to exclude from the search. Always in uppercase and a space between the stations. ex: **CT LIENSS SLP NOVA**
 
 ![bot_excl](./media/bot_excl.png)
 
