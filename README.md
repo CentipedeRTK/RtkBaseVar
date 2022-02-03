@@ -59,6 +59,19 @@ Connect your Rover's NTRIPclient to your RtkBaseVar session:
 
 # Installation
 
+## How it works
+
+* [Socat](https://linux.die.net/man/1/socat) creates two virtual ports /dev/pts/1 and /dev/pts/2
+* Two data streams are created with rtklib [str2str](https://manpages.debian.org/unstable/rtklib/str2str.1.en.html):
+  * between the caster centipede ntrip://:@caster.centipede.fr:80/ + Mountpoint variable and the port pts/1
+  * between the pts/2 port and your personal caster ntripc://@:9999/ME
+* A loop check continuously:
+  * the status of stations within a defined distance
+  * location data sent by the rover
+  * the distance between the rover and the stations according to the defined parameters
+* Rtkbase chooses the most suitable station to work with and modifies the first data stream.
+* Messages and interactions are possible between the user and the program through a Telegram bot
+
 ## Create a personal Telegram bot.
 
 * [Creating a Telegram bot account](https://usp-python.github.io/06-bot/)
@@ -70,29 +83,50 @@ Connect your Rover's NTRIPclient to your RtkBaseVar session:
 
   ![userid](https://usp-python.github.io/img/06-userinfobot.png)
 
-* Save in a file your **APIKEY** and **USERID**
+* Save in a file your acess token :**APIKEY=** and user id **USERID=**
 
 * Connect to Telegram account, search and connect to the bot:
   * Click to **start**
   * Bot send you ```/start```
   * It's Ok, you will receive a notification and send messages.
 
+## Install docker
+
+Docker is an open platform for developing, shipping, and running applications. Docker enables you to separate your applications from your infrastructure so you can deliver software quickly.
+
+Install Docker et Docker-compose
+
+```
+sudo apt-get update
+sudo apt-get install curl
+curl -fsSL https://get.docker.com/ | sh
+sudo systemctl enable docker
+sudo service docker start
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
+sudo apt-get install python-pip
+sudo pip install docker-compose
+````
+
+[https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
+
 ## First Build & Run:
 
-* Clone repo
+* Clone RtkBaseVar repo
 ```
 git clone https://github.com/jancelin/RtkBaseVar.git
 cd ./RtkBaseVar
 ```
 * Edit the docker-compose.yml with the Telegram bot **APIKEY** and your **USERID**
 
-* build RtkBaseVar
+* Build RtkBaseVar
 ```docker-compose build```
 
-* first start-up to see the logs and potential errors:
+* First start-up to see the logs and potential errors:
 ```docker-compose up```
 
-* connect your ntripclient to:
+* Connect your ntripclient to:
   * Your ip or DNS
   * Port: 9999
   * Mount name: ME
