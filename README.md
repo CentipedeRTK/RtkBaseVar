@@ -32,13 +32,6 @@ RtkBaseVar is written in Python, its deployment is done by Docker container. It 
   * Ability to purge logs
   * Restart of services
 
-![bot_start](./media/bot_start.png)
-![bot_move&log](./media/bot_move&log.png)
-
-![bot_info](./media/bot_info.png)
-![bot_map](./media/bot_map.png)
-
-
 ## Connect the Rover Ntripclient
 
 Your Rover or NTRIP client must be able to send an NMEA GGA frame to the Caster to retrieve your position.
@@ -59,17 +52,30 @@ Connect your Rover's NTRIPclient to your RtkBaseVar session:
 
 ## Parameters
 
-All parameters are editable by the Telegram bot, type any word or letter to access the parameter menu of RtkBaseVar. You can also write directly the action to ask the bot.
+* When the service is started (first time or in case of update) a message is sent, it allows to check that the parameters to exchange with the bot are good.
+![bot_start](./media/bot_start.png)
 
+* All parameters are editable by the Telegram bot, type any word or letter to access the parameter menu of RtkBaseVar. You can also write directly the action to ask the bot.
 ![bot_info](./media/bot_info.png)
 
 * **/excl** : list of GNSS stations to exclude from the search. Always in uppercase and a space between the stations. ex: **CT LIENSS SLP NOVA**
+![bot_excl](./media/bot_excl.png)
+
 * **/dist** : Maximum search distance of a base. Enter a integer number in kilometres.
+![bot_dist](./media/bot_dist.png)
+
 * **/crit** : Maximum distance before changing stations. In the case of several stations close together, RtkBaseVar will remain on the same base as long as this distance is not crossed and this even if the user is closer to a new base. Enter an integer number in kilometres.
+![bot_crit](./media/bot_crit.png)
+
 * **/htrs** : Hysteresis, Distance to be added to /crit or if exceeded, to the distance between 2 bases. This allows you to avoid changing stations if you are working at equal distance between 2 stations. Enter an integer number in kilometres.
+![bot_htrs](./media/bot_htrs.png)
 
 * **/map** : Displays the last coordinates sent by the rover, the date, fix quality, HDOP, altitude, station id (when there is one) and on which base you are connected. A map allows to visualize this information easily.
+![bot_map](./media/bot_map.png)
+
 * **/log** : Download the station change log file for use as metadata with its collected data.
+![bot_move&log](./media/bot_move&log.png)
+
 * **/clear** : Clears the data from the log file for new data collection.
 
 * **/restart** : Restarts the service, this is useful if the service crashes due to a bug.
