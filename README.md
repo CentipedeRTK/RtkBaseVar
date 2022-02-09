@@ -1,6 +1,8 @@
 # 🛰️ 🛰️ 🛰️ 🛰️ **RtkBaseVar**
 
   📡 📡 📡 Broadcasting the RTCM3 correction from the nearest [Centipede RTK](https://centipede.fr/index.php/view/map/?repository=cent&project=centipede) GNSS base  station 📍
+  
+ [![DOI](https://zenodo.org/badge/452754973.svg)](https://zenodo.org/badge/latestdoi/452754973)
 
 ## Description
 
