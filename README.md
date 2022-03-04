@@ -104,7 +104,7 @@ Connect your Rover's NTRIPclient to your RtkBaseVar session:
   * the status of stations within a defined distance
   * location data sent by the rover
   * the distance between the rover and the stations according to the defined parameters
-* Rtkbase chooses the most suitable station to work with and modifies the first data stream.
+* RtkBaseVar chooses the most suitable station to work with and modifies the first data stream.
 * Messages and interactions are possible between the user and the program through a Telegram bot
 
 ## Create a personal Telegram bot.
