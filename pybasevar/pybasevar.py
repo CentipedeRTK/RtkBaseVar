@@ -443,7 +443,7 @@ def restartbasevar():
         print("restart now")
         ## KILL old str2str_in
         killstr()
-        os.execv(sys.executable, ['python'] + sys.argv)
+        os.execv('/usr/bin/python3', ['/usr/bin/python3'] + sys.argv)
 
 def killstr():
     # iterating through each instance of the process
