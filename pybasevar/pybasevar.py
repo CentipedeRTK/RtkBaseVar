@@ -209,7 +209,8 @@ def echo_all(message):
     "*/htrs* Hysteresis: *"+configp["data"]["htrs"]+"*km"+ "\n\n" +
     "*/map* Show last position\n"
     "*/log*    Download change logs\n" +
-    "*/clear* Delete logs")
+    "*/clear* Delete logs\n\n"+
+    "*/restart* Restart services")
     bot.reply_to(message,mes,parse_mode= 'Markdown')
 
 #Get position and map
@@ -249,8 +250,9 @@ def telegrambot():
 def telegrambot2():
     if len(sys.argv) >= 2:
         configp.read(paramname)
+        bot.send_message(configp["telegram"]["user_id"], "RtkBaseVar 0.2\nhttps://github.com/jancelin/RtkBaseVar/releases/tag/RtkBaseVar_0_2\n\n")
         bot.send_message(configp["telegram"]["user_id"], configp["message"]["message2"]
-            +"\nYou are connected to base "+configp["data"]["mp_use"])
+            +"\nYou are connected to "+configp["data"]["mp_use"])
 
 ##Create user log file
 def createlog():
