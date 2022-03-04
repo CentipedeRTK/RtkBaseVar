@@ -421,10 +421,8 @@ def loop_mp():
         except pynmea2.ParseError as e:
             #print('Parse error: {}'.format(e))
             continue
-        # except Exception as exc:
-        #     print("Caster adresses problem or Caster down!!!!!!!!")
-        #     time.sleep(3)
-        #     pass
+        except Exception:
+            continue
 
 ## stop loop for change parameters (.ini)
 def stoptowrite():
