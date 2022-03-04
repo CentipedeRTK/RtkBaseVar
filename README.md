@@ -1,6 +1,8 @@
 # 🛰️ 🛰️ 🛰️ 🛰️ **RtkBaseVar**
 
-  📡 📡 📡 Broadcasting the RTCM3 correction from the nearest RTK station 📍
+  📡 📡 📡 Broadcasting the RTCM3 correction from the nearest [Centipede RTK](https://centipede.fr/index.php/view/map/?repository=cent&project=centipede) GNSS base  station 📍
+  
+ [![DOI](https://zenodo.org/badge/452754973.svg)](https://zenodo.org/badge/latestdoi/452754973)
 
 ## Description
 
@@ -173,3 +175,6 @@ Now RtkBaseVar get NMEA data from Rover every X seconds, check lon lat, research
 
 * Run as deamon
 ```docker-compose up -d```
+
+----------------------------------
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
